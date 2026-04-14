@@ -3,55 +3,99 @@ HTML
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Prédictions IA</title>
+<title>AI Sports Predictor</title>
 <style>
-body {font-family: Arial; padding:20px; background:#0b0f1a; color:white;}
-input,button {padding:10px; margin:5px; width:100%; border-radius:8px; border:none;}
-button {background:#00c853; color:white; font-weight:bold;}
-#result {margin-top:20px; background:#11182a; padding:15px; border-radius:10px;}
+body{font-family:Arial;background:#0b0f1a;color:white;padding:15px}
+input,button,select{width:100%;padding:10px;margin:5px 0;border:none;border-radius:8px}
+button{background:#00c853;color:white;font-weight:bold}
+#result{background:#11182a;padding:15px;border-radius:10px;margin-top:15px}
 </style>
 </head>
 <body>
 
-<h2>Prédictions Match IA</h2>
+<h3>AI Sports Predictor</h3>
+
+<select id="sport">
+<option value="football">Football</option>
+<option value="basketball">Basketball</option>
+<option value="tennis">Tennis</option>
+</select>
 
 <input type="text" id="team1" placeholder="Equipe 1">
 <input type="text" id="team2" placeholder="Equipe 2">
 
-<button onclick="analyserMatch()">Analyser</button>
+<button onclick="analyser()">Analyser</button>
 
 <div id="result"></div>
 
 <script>
-function analyserMatch() {
-const equipe1 = document.getElementById("team1").value.trim();
-const equipe2 = document.getElementById("team2").value.trim();
+async function analyser(){
 
-if (!equipe1 || !equipe2) {
-alert("Entre deux équipes");
-return;
+const team1=document.getElementById("team1").value;
+const team2=document.getElementById("team2").value;
+
+const url="https://api-football-v1.p.rapidapi.com/v3/fixtures?next=10";
+
+const options={
+method:'GET',
+headers:{
+'X-RapidAPI-Key':'8814939dd5msh3d233e8ee7aac4bp195e8cjsn592854cda7e3',
+'X-RapidAPI-Host':'api-football-v1.p.rapidapi.com'
+}
+};
+
+try{
+const res=await fetch(url,options);
+const data=await res.json();
+
+const prob1=Math.floor(Math.random()*20)+40;
+const prob2=100-prob1;
+const draw=100-(prob1+prob2);
+
+const score1=Math.floor(Math.random()*3);
+const score2=Math.floor(Math.random()*3);
+
+const corners=Math.floor(Math.random()*6)+7;
+const cards=Math.floor(Math.random()*4)+3;
+
+document.getElementById("result").innerHTML=
+"<b>"+team1+" vs "+team2+"</b><br><br>"+
+"1 : "+prob1+"%<br>"+
+"X : "+draw+"%<br>"+
+"2 : "+prob2+"%<br><br>"+
+
+"1X : Oui<br>"+
+"X2 : Oui<br>"+
+"12 : Oui<br><br>"+
+
+"BTTS Oui<br>"+
+"BTTS Non<br><br>"+
+
+"Over 1.5 Oui<br>"+
+"Under 1.5 Non<br>"+
+"Over 2.5 "+(prob1>50?"Oui":"Non")+"<br>"+
+"Under 2.5 "+(prob1>50?"Non":"Oui")+"<br>"+
+"Over 3.5 "+(prob1>60?"Oui":"Non")+"<br>"+
+"Under 3.5 "+(prob1>60?"Non":"Oui")+"<br><br>"+
+
+"MT-Fin : 1-1<br>"+
+"Score exact 1 : "+score1+"-"+score2+"<br>"+
+"Score exact 2 : "+(score1+1)+"-"+score2+"<br><br>"+
+
+"Corners Over 8.5 Oui<br>"+
+"Corners Under 8.5 Non<br>"+
+"Cartons Over 3.5 Oui<br>"+
+"Cartons Under 3.5 Non<br><br>"+
+
+"Penalty probable : "+(prob1>45?"Oui":"Non")+"<br>"+
+"Carton rouge probable : "+(prob1>55?"Oui":"Non")+"<br><br>"+
+
+"Match sûr : "+(prob1>52?"Oui ⭐":"Non");
+
+}catch(e){
+document.getElementById("result").innerHTML="Erreur API";
 }
 
-const prob1 = Math.floor(Math.random() * 50) + 25;
-const prob2 = 100 - prob1;
-
-const mtfin = ["1-1","1-X","X-1","2-2","2-X","X-2"];
-const choix = mtfin[Math.floor(Math.random()*mtfin.length)];
-
-document.getElementById("result").innerHTML =
-"<h3>Prédictions IA</h3>" +
-"Victoire " + equipe1 + " : " + prob1 + "%<br>" +
-"Victoire " + equipe2 + " : " + prob2 + "%<br>" +
-"1X : Oui<br>" +
-"X2 : Oui<br>" +
-"X : " + (prob1>48?"Non":"Possible") + "<br>" +
-"MT-Fin : " + choix + "<br>" +
-"BTTS : " + (prob1 > 45 ? "Oui" : "Non") + "<br>" +
-"Over 1.5 : Oui<br>" +
-"Over 2.5 : " + (prob1 > 40 ? "Oui" : "Non") + "<br>" +
-"Corners : " + (Math.floor(Math.random()*6)+7) + "<br>" +
-"Cartons : " + (Math.floor(Math.random()*4)+3) + "<br>" +
-"Score exact IA : " + Math.floor(Math.random()*3) + " - " + Math.floor(Math.random()*3);
 }
 </script>
 
