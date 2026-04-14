@@ -59,7 +59,7 @@ text-align:left;
 </div>
 
 <script>
-async function analyserMatch() {
+function analyserMatch() {
 const equipe1 = document.getElementById("team1").value.trim();
 const equipe2 = document.getElementById("team2").value.trim();
 
@@ -68,31 +68,26 @@ alert("Entre deux équipes");
 return;
 }
 
-document.getElementById("result").innerHTML = "Analyse IA en cours...";
-
-try {
-
-await fetch("https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=" + encodeURIComponent(equipe1));
-await fetch("https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=" + encodeURIComponent(equipe2));
-
 const prob1 = Math.floor(Math.random() * 50) + 25;
 const prob2 = 100 - prob1;
 
-document.getElementById("result").innerHTML = `
-<h3>Prédictions IA</h3>
-Victoire ${equipe1} : ${prob1}%<br>
-Victoire ${equipe2} : ${prob2}%<br>
-BTTS : ${prob1 > 45 ? "Oui" : "Non"}<br>
-Over 1.5 : Oui<br>
-Over 2.5 : ${prob1 > 40 ? "Oui" : "Non"}<br>
-Corners : ${Math.floor(Math.random()*6)+7}<br>
-Cartons : ${Math.floor(Math.random()*4)+3}<br>
-Score exact IA : ${Math.floor(Math.random()*3)} - ${Math.floor(Math.random()*3)}
-`;
+const mtfin = ["1-1","1-X","X-1","2-2","2-X","X-2"];
+const choix = mtfin[Math.floor(Math.random()*mtfin.length)];
 
-} catch (error) {
-document.getElementById("result").innerHTML = "Erreur connexion API";
-}
+document.getElementById("result").innerHTML =
+"<h3>Prédictions IA</h3>" +
+"Victoire " + equipe1 + " : " + prob1 + "%<br>" +
+"Victoire " + equipe2 + " : " + prob2 + "%<br>" +
+"1X : Oui<br>" +
+"X2 : Oui<br>" +
+"X : " + (prob1>48?"Non":"Possible") + "<br>" +
+"MT-Fin : " + choix + "<br>" +
+"BTTS : " + (prob1 > 45 ? "Oui" : "Non") + "<br>" +
+"Over 1.5 : Oui<br>" +
+"Over 2.5 : " + (prob1 > 40 ? "Oui" : "Non") + "<br>" +
+"Corners : " + (Math.floor(Math.random()*6)+7) + "<br>" +
+"Cartons : " + (Math.floor(Math.random()*4)+3) + "<br>" +
+"Score exact IA : " + Math.floor(Math.random()*3) + " - " + Math.floor(Math.random()*3);
 }
 </script>
 
