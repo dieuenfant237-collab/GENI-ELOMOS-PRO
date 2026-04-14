@@ -1,62 +1,26 @@
 HTML
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GENI-ELOMOS-PRO</title>
+<title>Prédictions IA</title>
 <style>
-body{
-font-family:Arial;
-background:#0b0f2a;
-color:white;
-text-align:center;
-padding:20px;
-}
-.container{
-background:#11163a;
-padding:20px;
-border-radius:10px;
-max-width:400px;
-margin:auto;
-}
-input{
-width:90%;
-padding:10px;
-margin:10px 0;
-border:none;
-border-radius:5px;
-}
-button{
-background:#00c853;
-color:white;
-border:none;
-padding:12px 20px;
-border-radius:5px;
-cursor:pointer;
-width:95%;
-}
-#result{
-margin-top:20px;
-background:#0f1440;
-padding:15px;
-border-radius:8px;
-text-align:left;
-}
+body {font-family: Arial; padding:20px; background:#0b0f1a; color:white;}
+input,button {padding:10px; margin:5px; width:100%; border-radius:8px; border:none;}
+button {background:#00c853; color:white; font-weight:bold;}
+#result {margin-top:20px; background:#11182a; padding:15px; border-radius:10px;}
 </style>
 </head>
 <body>
 
-<div class="container">
-<h2>GENI-ELOMOS-PRO</h2>
+<h2>Prédictions Match IA</h2>
 
 <input type="text" id="team1" placeholder="Equipe 1">
 <input type="text" id="team2" placeholder="Equipe 2">
 
-<button onclick="analyserMatch()">Analyser IA</button>
+<button onclick="analyserMatch()">Analyser</button>
 
 <div id="result"></div>
-</div>
 
 <script>
 function analyserMatch() {
