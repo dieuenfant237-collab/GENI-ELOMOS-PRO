@@ -1,4 +1,4 @@
-
+HTML
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,16 +26,30 @@ button{background:linear-gradient(90deg,#ff0000,#ff7300);color:white;font-weight
 <option>Basketball</option>
 <option>Tennis</option>
 </select>
-<input type="text" id="match" placeholder="Entrer le match">
+<input type="text" id="match" placeholder="Equipe A vs Equipe B">
 <button onclick="predict()">PREDIRE</button>
 <div id="result"></div>
 </div>
 <div class="watermark">GENI ELOMOS PRO</div>
 <script>
 function predict(){
-var teams=["1-0","2-1","2-0","1-1","3-1"];
-var random=teams[Math.floor(Math.random()*teams.length)];
-document.getElementById("result").innerHTML="Score exact: "+random+"<br>"+"Over 2.5: "+(Math.random()>0.5?"Oui":"Non")+"<br>"+"BTTS: "+(Math.random()>0.5?"Oui":"Non")+"<br>"+"Corners: "+(Math.floor(Math.random()*5)+7);
+var match=document.getElementById("match").value;
+if(match==""){document.getElementById("result").innerHTML="Entrer les équipes";return;}
+var teams=match.split("vs");
+var teamA=teams[0]?teams[0].trim():"Equipe A";
+var teamB=teams[1]?teams[1].trim():"Equipe B";
+var forceA=Math.floor(Math.random()*5)+1;
+var forceB=Math.floor(Math.random()*5)+1;
+var scoreA=forceA>forceB?Math.floor(Math.random()*2)+1:Math.floor(Math.random()*2);
+var scoreB=forceB>forceA?Math.floor(Math.random()*2)+1:Math.floor(Math.random()*2);
+var corners=Math.floor(Math.random()*5)+7;
+var over=(scoreA+scoreB)>2?"Oui":"Non";
+var btts=(scoreA>0 && scoreB>0)?"Oui":"Non";
+document.getElementById("result").innerHTML=
+teamA+" "+scoreA+" - "+scoreB+" "+teamB+"<br>"+
+"Over 2.5: "+over+"<br>"+
+"BTTS: "+btts+"<br>"+
+"Corners: "+corners;
 }
 </script>
 </body>
