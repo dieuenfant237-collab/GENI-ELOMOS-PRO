@@ -1,24 +1,24 @@
-
+HTML
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>AI Sports Predictor</title>
+<title>AI Sports Predictor PRO</title>
 <style>
 body{font-family:Arial;background:#0b0f1a;color:white;padding:15px}
-input,button,select{width:100%;padding:10px;margin:5px 0;border:none;border-radius:8px}
+input,button,select{width:100%;padding:12px;margin:6px 0;border:none;border-radius:10px}
 button{background:#00c853;color:white;font-weight:bold}
 #result{background:#11182a;padding:15px;border-radius:10px;margin-top:15px}
+.safe{color:#00e676;font-weight:bold}
+.risk{color:#ff5252;font-weight:bold}
 </style>
 </head>
 <body>
 
-<h3>AI Sports Predictor</h3>
+<h3>AI Sports Predictor PRO</h3>
 
 <select id="sport">
-<option value="football">Football</option>
-<option value="basketball">Basketball</option>
-<option value="tennis">Tennis</option>
+<option>Football</option>
 </select>
 
 <input type="text" id="team1" placeholder="Equipe 1">
@@ -29,73 +29,67 @@ button{background:#00c853;color:white;font-weight:bold}
 <div id="result"></div>
 
 <script>
-async function analyser(){
-
-const team1=document.getElementById("team1").value;
-const team2=document.getElementById("team2").value;
-
-const url="https://api-football-v1.p.rapidapi.com/v3/fixtures?next=10";
-
-const options={
-method:'GET',
-headers:{
-'X-RapidAPI-Key':'8814939dd5msh3d233e8ee7aac4bp195e8cjsn592854cda7e3',
-'X-RapidAPI-Host':'api-football-v1.p.rapidapi.com'
-}
-};
-
-try{
-const res=await fetch(url,options);
-const data=await res.json();
-
-const prob1=Math.floor(Math.random()*20)+40;
-const prob2=100-prob1;
-const draw=100-(prob1+prob2);
-
-const score1=Math.floor(Math.random()*3);
-const score2=Math.floor(Math.random()*3);
-
-const corners=Math.floor(Math.random()*6)+7;
-const cards=Math.floor(Math.random()*4)+3;
-
-document.getElementById("result").innerHTML=
-"<b>"+team1+" vs "+team2+"</b><br><br>"+
-"1 : "+prob1+"%<br>"+
-"X : "+draw+"%<br>"+
-"2 : "+prob2+"%<br><br>"+
-
-"1X : Oui<br>"+
-"X2 : Oui<br>"+
-"12 : Oui<br><br>"+
-
-"BTTS Oui<br>"+
-"BTTS Non<br><br>"+
-
-"Over 1.5 Oui<br>"+
-"Under 1.5 Non<br>"+
-"Over 2.5 "+(prob1>50?"Oui":"Non")+"<br>"+
-"Under 2.5 "+(prob1>50?"Non":"Oui")+"<br>"+
-"Over 3.5 "+(prob1>60?"Oui":"Non")+"<br>"+
-"Under 3.5 "+(prob1>60?"Non":"Oui")+"<br><br>"+
-
-"MT-Fin : 1-1<br>"+
-"Score exact 1 : "+score1+"-"+score2+"<br>"+
-"Score exact 2 : "+(score1+1)+"-"+score2+"<br><br>"+
-
-"Corners Over 8.5 Oui<br>"+
-"Corners Under 8.5 Non<br>"+
-"Cartons Over 3.5 Oui<br>"+
-"Cartons Under 3.5 Non<br><br>"+
-
-"Penalty probable : "+(prob1>45?"Oui":"Non")+"<br>"+
-"Carton rouge probable : "+(prob1>55?"Oui":"Non")+"<br><br>"+
-
-"Match sûr : "+(prob1>52?"Oui ⭐":"Non");
-
-}catch(e){
-document.getElementById("result").innerHTML="Erreur API";
+function hash(s){
+let h=0;
+for(let i=0;i<s.length;i++){h=s.charCodeAt(i)+((h<<5)-h)}
+return Math.abs(h)
 }
 
+function analyser(){
+const t1=document.getElementById("team1").value.toLowerCase()
+const t2=document.getElementById("team2").value.toLowerCase()
+
+let atk1=(hash(t1)%150)/100+0.8
+let atk2=(hash(t2)%150)/100+0.8
+let def1=(hash(t1+"d")%120)/100+0.8
+let def2=(hash(t2+"d")%120)/100+0.8
+
+let power1=atk1/def2
+let power2=atk2/def1
+
+let prob1=Math.round((power1/(power1+power2))*100)
+let prob2=Math.round((power2/(power1+power2))*100)
+let draw=100-prob1-prob2
+
+let score1=Math.max(0,Math.round(power1))
+let score2=Math.max(0,Math.round(power2))
+
+let corners=Math.round((hash(t1+t2)%8)+7)
+let cards=Math.round((hash(t2+t1)%5)+2)
+
+let confiance=Math.max(prob1,prob2)
+let fiable=confiance>=70
+let label=fiable?"MATCH TRES FIABLE":"RISQUE"
+let cls=fiable?"safe":"risk"
+
+document.getElementById("result").innerHTML=`
+<b>${t1} vs ${t2}</b><br><br>
+
+<span class="${cls}">${label}</span><br><br>
+
+1 : ${prob1}%<br>
+X : ${draw}%<br>
+2 : ${prob2}%<br><br>
+
+1X : ${prob1>45?"Oui":"Non"}<br>
+X2 : ${prob2>45?"Oui":"Non"}<br><br>
+
+BTTS : ${(score1>0 && score2>0)?"Oui":"Non"}<br><br>
+
+Over 1.5 : ${(score1+score2)>1?"Oui":"Non"}<br>
+Over 2.5 : ${(score1+score2)>2?"Oui":"Non"}<br>
+Over 3.5 : ${(score1+score2)>3?"Oui":"Non"}<br><br>
+
+Score exact 1 : ${score1}-${score2}<br>
+Score exact 2 : ${score1+1}-${score2}<br><br>
+
+Corners Over 8.5 : ${corners>8?"Oui":"Non"}<br>
+Cartons Over 3.5 : ${cards>3?"Oui":"Non"}<br><br>
+
+Meilleur prono : ${prob1>prob2?"Victoire "+t1:"Victoire "+t2}<br><br>
+
+Confiance IA : ${confiance}%
+`
 }
 </script>
 
